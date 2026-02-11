@@ -29,7 +29,7 @@ const LoadingScreen = ({ onEnter }: LoadingScreenProps) => {
     >
       <div className="text-center mb-8">
         <h1 className="font-bungee text-5xl md:text-7xl text-zoo-gold mb-2 animate-float drop-shadow-lg">
-          🦁 ZOO DBMS 🐅
+          🦁 Jungle Book 🐅
         </h1>
         <p className="text-zoo-sand font-nunito text-lg md:text-xl font-semibold tracking-wide">
           Database Management System

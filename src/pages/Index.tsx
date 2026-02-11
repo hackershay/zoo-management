@@ -29,7 +29,7 @@ const Index = () => {
       <header className="bg-zoo-green sticky top-0 z-40 shadow-lg">
         <div className="container py-4 flex items-center justify-between">
           <h1 className="font-bungee text-2xl md:text-3xl text-zoo-gold drop-shadow">
-            🦁 Zoo DBMS
+            🦁 Jungle Book
           </h1>
           <div className="flex gap-1 md:gap-2">
             {tabs.map((tab) => (
@@ -92,7 +92,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="bg-zoo-green text-zoo-sand py-4 mt-8">
         <div className="container text-center font-nunito text-sm">
-          <p className="font-bold">Zoo Database Management System</p>
+          <p className="font-bold">Jungle Book</p>
           <p className="text-zoo-sand/60 text-xs mt-1">
             Created by Shreya Elizabeth Joseph • Kamuel Shawn • Joel Jacob Roji • Darren Samuel D'cruz
           </p>
