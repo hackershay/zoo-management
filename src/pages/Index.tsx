@@ -3,11 +3,13 @@ import LoadingScreen from "@/components/LoadingScreen";
 import EnclosureCard from "@/components/EnclosureCard";
 import AnimalModal from "@/components/AnimalModal";
 import StaffSection from "@/components/StaffSection";
-import VisitorsSection from "@/components/VisitorsSection";
+import VisitorsTab from "@/components/VisitorsTab";
+import TicketsTab from "@/components/TicketsTab";
+import MaintenanceTab from "@/components/MaintenanceTab";
 import AddAnimalForm from "@/components/AddAnimalForm";
 import { enclosures, animals as initialAnimals, staff as initialStaff, Enclosure, Animal, Staff } from "@/data/zooData";
 
-type Tab = "enclosures" | "staff" | "visitors";
+type Tab = "enclosures" | "staff" | "visitors" | "tickets" | "maintenance";
 
 const Index = () => {
   const [showLoading, setShowLoading] = useState(true);
@@ -34,24 +36,25 @@ const Index = () => {
 
   const tabs: { key: Tab; label: string; icon: string }[] = [
     { key: "enclosures", label: "Enclosures", icon: "🏠" },
-    { key: "staff", label: "Staff & Depts", icon: "👥" },
-    { key: "visitors", label: "Visitors & More", icon: "🎫" },
+    { key: "staff", label: "Staff", icon: "👥" },
+    { key: "visitors", label: "Visitors", icon: "🎫" },
+    { key: "tickets", label: "Tickets", icon: "🎟️" },
+    { key: "maintenance", label: "Maintenance", icon: "🔧" },
   ];
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="bg-zoo-green sticky top-0 z-40 shadow-lg">
         <div className="container py-4 flex items-center justify-between">
           <h1 className="font-bungee text-2xl md:text-3xl text-zoo-gold drop-shadow">
             🦁 Jungle Book
           </h1>
-          <div className="flex gap-1 md:gap-2">
+          <div className="flex gap-1 md:gap-2 flex-wrap justify-end">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`font-nunito font-bold text-xs md:text-sm px-3 md:px-5 py-2 rounded-lg transition-all ${
+                className={`font-nunito font-bold text-xs md:text-sm px-2 md:px-4 py-2 rounded-lg transition-all ${
                   activeTab === tab.key
                     ? "bg-zoo-gold text-zoo-brown shadow-md"
                     : "bg-zoo-brown/40 text-zoo-sand hover:bg-zoo-brown/60"
@@ -65,7 +68,6 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Content */}
       <main className="container py-8">
         {activeTab === "enclosures" && (
           <div className="animate-fade-in">
@@ -80,12 +82,7 @@ const Index = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {enclosures.map((enc) => (
-                <EnclosureCard
-                  key={enc.id}
-                  enclosure={enc}
-                  onClick={setSelectedEnclosure}
-                  animals={animalsList}
-                />
+                <EnclosureCard key={enc.id} enclosure={enc} onClick={setSelectedEnclosure} animals={animalsList} />
               ))}
             </div>
           </div>
@@ -93,29 +90,25 @@ const Index = () => {
 
         {activeTab === "staff" && (
           <div className="animate-fade-in">
-            <StaffSection
-              staffList={staffList}
-              onAddStaff={handleAddStaff}
-              onFireStaff={handleFireStaff}
-            />
+            <StaffSection staffList={staffList} onAddStaff={handleAddStaff} onFireStaff={handleFireStaff} />
           </div>
         )}
 
         {activeTab === "visitors" && (
-          <div className="animate-fade-in">
-            <VisitorsSection />
-          </div>
+          <div className="animate-fade-in"><VisitorsTab /></div>
+        )}
+
+        {activeTab === "tickets" && (
+          <div className="animate-fade-in"><TicketsTab /></div>
+        )}
+
+        {activeTab === "maintenance" && (
+          <div className="animate-fade-in"><MaintenanceTab /></div>
         )}
       </main>
 
-      <AnimalModal
-        enclosure={selectedEnclosure}
-        open={!!selectedEnclosure}
-        onClose={() => setSelectedEnclosure(null)}
-        animals={animalsList}
-      />
+      <AnimalModal enclosure={selectedEnclosure} open={!!selectedEnclosure} onClose={() => setSelectedEnclosure(null)} animals={animalsList} />
 
-      {/* Footer */}
       <footer className="bg-zoo-green text-zoo-sand py-4 mt-8">
         <div className="container text-center font-nunito text-sm">
           <p className="font-bold">Jungle Book</p>
