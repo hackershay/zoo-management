@@ -26,8 +26,20 @@ const Index = () => {
     setAnimalsList(prev => [...prev, animal]);
   };
 
+  const handleUpdateAnimal = (updated: Animal) => {
+    setAnimalsList(prev => prev.map(a => a.id === updated.id ? updated : a));
+  };
+
+  const handleDeleteAnimal = (animalId: number) => {
+    setAnimalsList(prev => prev.filter(a => a.id !== animalId));
+  };
+
   const handleAddStaff = (newStaff: Staff) => {
     setStaffList(prev => [...prev, newStaff]);
+  };
+
+  const handleUpdateStaff = (updated: Staff) => {
+    setStaffList(prev => prev.map(s => s.id === updated.id ? updated : s));
   };
 
   const handleFireStaff = (staffId: number) => {
@@ -74,9 +86,7 @@ const Index = () => {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="font-bungee text-3xl text-foreground mb-1">🐾 Enclosures</h2>
-                <p className="text-muted-foreground font-nunito">
-                  Click on an enclosure to see the animals inside!
-                </p>
+                <p className="text-muted-foreground font-nunito">Click on an enclosure to see the animals inside!</p>
               </div>
               <AddAnimalForm onAdd={handleAddAnimal} existingAnimals={animalsList} />
             </div>
@@ -90,24 +100,23 @@ const Index = () => {
 
         {activeTab === "staff" && (
           <div className="animate-fade-in">
-            <StaffSection staffList={staffList} onAddStaff={handleAddStaff} onFireStaff={handleFireStaff} />
+            <StaffSection staffList={staffList} onAddStaff={handleAddStaff} onFireStaff={handleFireStaff} onUpdateStaff={handleUpdateStaff} />
           </div>
         )}
 
-        {activeTab === "visitors" && (
-          <div className="animate-fade-in"><VisitorsTab /></div>
-        )}
-
-        {activeTab === "tickets" && (
-          <div className="animate-fade-in"><TicketsTab /></div>
-        )}
-
-        {activeTab === "maintenance" && (
-          <div className="animate-fade-in"><MaintenanceTab /></div>
-        )}
+        {activeTab === "visitors" && <div className="animate-fade-in"><VisitorsTab /></div>}
+        {activeTab === "tickets" && <div className="animate-fade-in"><TicketsTab /></div>}
+        {activeTab === "maintenance" && <div className="animate-fade-in"><MaintenanceTab /></div>}
       </main>
 
-      <AnimalModal enclosure={selectedEnclosure} open={!!selectedEnclosure} onClose={() => setSelectedEnclosure(null)} animals={animalsList} />
+      <AnimalModal
+        enclosure={selectedEnclosure}
+        open={!!selectedEnclosure}
+        onClose={() => setSelectedEnclosure(null)}
+        animals={animalsList}
+        onUpdateAnimal={handleUpdateAnimal}
+        onDeleteAnimal={handleDeleteAnimal}
+      />
 
       <footer className="bg-zoo-green text-zoo-sand py-4 mt-8">
         <div className="container text-center font-nunito text-sm">
