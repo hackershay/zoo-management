@@ -1,10 +1,12 @@
-import { Enclosure, getAnimalsByEnclosure, getSpeciesById, getMedicalRecordByAnimal, speciesEmojis } from "@/data/zooData";
+import { Animal, Enclosure, getSpeciesById, getMedicalRecordByAnimal, speciesEmojis } from "@/data/zooData";
+import { getEmojiForAnimal } from "@/components/AddAnimalForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface AnimalModalProps {
   enclosure: Enclosure | null;
   open: boolean;
   onClose: () => void;
+  animals: Animal[];
 }
 
 const statusColors: Record<string, string> = {
@@ -13,10 +15,10 @@ const statusColors: Record<string, string> = {
   "Stable": "bg-accent text-accent-foreground",
 };
 
-const AnimalModal = ({ enclosure, open, onClose }: AnimalModalProps) => {
+const AnimalModal = ({ enclosure, open, onClose, animals }: AnimalModalProps) => {
   if (!enclosure) return null;
 
-  const animals = getAnimalsByEnclosure(enclosure.id);
+  const encAnimals = animals.filter(a => a.enclosureId === enclosure.id);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -34,16 +36,15 @@ const AnimalModal = ({ enclosure, open, onClose }: AnimalModalProps) => {
         </DialogHeader>
 
         <div className="space-y-4 mt-2">
-          {animals.map((animal) => {
+          {encAnimals.map((animal) => {
             const sp = getSpeciesById(animal.speciesId);
             const med = getMedicalRecordByAnimal(animal.id);
-            const emoji = sp ? speciesEmojis[sp.id] || "🐾" : "🐾";
+            const emoji = sp
+              ? speciesEmojis[sp.id] || getEmojiForAnimal(animal.name, sp.commonName)
+              : getEmojiForAnimal(animal.name, "");
 
             return (
-              <div
-                key={animal.id}
-                className="bg-background rounded-lg p-4 border border-border shadow-sm"
-              >
+              <div key={animal.id} className="bg-background rounded-lg p-4 border border-border shadow-sm">
                 <div className="flex items-start gap-4">
                   <div className="text-5xl animate-float">{emoji}</div>
                   <div className="flex-1 min-w-0">
@@ -53,31 +54,24 @@ const AnimalModal = ({ enclosure, open, onClose }: AnimalModalProps) => {
                         {sp.commonName} ({sp.scientificName})
                       </p>
                     )}
-
                     <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-xs font-nunito">
                       <span className="text-muted-foreground">Gender:</span>
                       <span className="font-semibold text-foreground">{animal.gender}</span>
-                      
                       <span className="text-muted-foreground">Born:</span>
                       <span className="font-semibold text-foreground">{animal.dateOfBirth}</span>
-
                       <span className="text-muted-foreground">Acquired:</span>
                       <span className="font-semibold text-foreground">{animal.acquisitionDate}</span>
-
                       {sp && (
                         <>
                           <span className="text-muted-foreground">Diet:</span>
                           <span className="font-semibold text-foreground">{sp.dietType}</span>
-                          
                           <span className="text-muted-foreground">Habitat:</span>
                           <span className="font-semibold text-foreground">{sp.habitatType}</span>
-                          
                           <span className="text-muted-foreground">Conservation:</span>
                           <span className="font-semibold text-foreground">{sp.conservationStatus}</span>
                         </>
                       )}
                     </div>
-
                     {med && (
                       <div className="mt-3 flex items-center gap-2 flex-wrap">
                         <span className={`text-xs font-bold px-2 py-1 rounded-full ${statusColors[med.healthStatus] || "bg-muted text-muted-foreground"}`}>
