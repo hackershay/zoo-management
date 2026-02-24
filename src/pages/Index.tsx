@@ -4,7 +4,8 @@ import EnclosureCard from "@/components/EnclosureCard";
 import AnimalModal from "@/components/AnimalModal";
 import StaffSection from "@/components/StaffSection";
 import VisitorsSection from "@/components/VisitorsSection";
-import { enclosures, Enclosure } from "@/data/zooData";
+import AddAnimalForm from "@/components/AddAnimalForm";
+import { enclosures, animals as initialAnimals, staff as initialStaff, Enclosure, Animal, Staff } from "@/data/zooData";
 
 type Tab = "enclosures" | "staff" | "visitors";
 
@@ -12,10 +13,24 @@ const Index = () => {
   const [showLoading, setShowLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>("enclosures");
   const [selectedEnclosure, setSelectedEnclosure] = useState<Enclosure | null>(null);
+  const [animalsList, setAnimalsList] = useState<Animal[]>(initialAnimals);
+  const [staffList, setStaffList] = useState<Staff[]>(initialStaff);
 
   if (showLoading) {
     return <LoadingScreen onEnter={() => setShowLoading(false)} />;
   }
+
+  const handleAddAnimal = (animal: Animal) => {
+    setAnimalsList(prev => [...prev, animal]);
+  };
+
+  const handleAddStaff = (newStaff: Staff) => {
+    setStaffList(prev => [...prev, newStaff]);
+  };
+
+  const handleFireStaff = (staffId: number) => {
+    setStaffList(prev => prev.filter(s => s.id !== staffId));
+  };
 
   const tabs: { key: Tab; label: string; icon: string }[] = [
     { key: "enclosures", label: "Enclosures", icon: "🏠" },
@@ -54,16 +69,22 @@ const Index = () => {
       <main className="container py-8">
         {activeTab === "enclosures" && (
           <div className="animate-fade-in">
-            <h2 className="font-bungee text-3xl text-foreground mb-2">🐾 Enclosures</h2>
-            <p className="text-muted-foreground font-nunito mb-6">
-              Click on an enclosure to see the animals inside!
-            </p>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="font-bungee text-3xl text-foreground mb-1">🐾 Enclosures</h2>
+                <p className="text-muted-foreground font-nunito">
+                  Click on an enclosure to see the animals inside!
+                </p>
+              </div>
+              <AddAnimalForm onAdd={handleAddAnimal} existingAnimals={animalsList} />
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {enclosures.map((enc) => (
                 <EnclosureCard
                   key={enc.id}
                   enclosure={enc}
                   onClick={setSelectedEnclosure}
+                  animals={animalsList}
                 />
               ))}
             </div>
@@ -72,7 +93,11 @@ const Index = () => {
 
         {activeTab === "staff" && (
           <div className="animate-fade-in">
-            <StaffSection />
+            <StaffSection
+              staffList={staffList}
+              onAddStaff={handleAddStaff}
+              onFireStaff={handleFireStaff}
+            />
           </div>
         )}
 
@@ -87,6 +112,7 @@ const Index = () => {
         enclosure={selectedEnclosure}
         open={!!selectedEnclosure}
         onClose={() => setSelectedEnclosure(null)}
+        animals={animalsList}
       />
 
       {/* Footer */}
